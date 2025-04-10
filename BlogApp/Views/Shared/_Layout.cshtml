@@ -1,0 +1,61 @@
+﻿<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewData["Title"] - BlogApp</title>
+
+    <!-- Vlastní styly -->
+    <link rel="stylesheet" href="~/css/styles.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+</head>
+<body>
+
+    <!-- Navigační menu -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">Clean Blog</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Articles" asp-action="Index">Posts</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contact">Contact</a></li>
+                    <partial name="_LoginPartial" />
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hlavní obsah -->
+    <div class="container mt-4">
+        @RenderBody()
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4 bg-light mt-5">
+        <div class="container text-center">
+            <p class="m-0">© BlogApp @DateTime.Now.Year</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap -->
+    <script src="~/js/scripts.js" asp-append-version="true"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- TinyMCE Editor -->
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            tinymce.init({
+                selector: 'textarea.tinymce',
+                plugins: 'advlist autolink lists link image charmap print preview anchor searchreplace visualblocks code fullscreen insertdatetime media table paste code help wordcount',
+                toolbar: 'undo redo | styles | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media',
+                menubar: false,
+                height: 400
+            });
+        });
+    </script>
+
+</body>

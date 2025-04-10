@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+
+@model BlogApp.Models.Article
+
+@{
+    ViewData["Title"] = Model.Title;
+    var user = await UserManager.GetUserAsync(User);
+    var isAdmin = User.IsInRole("Admin");
+    var isAuthor = user != null && Model.AuthorId == user.Id;
+}
+
+<!-- Banner s článkem -->
+<header class="masthead" style="background-image: url('/assets/article-banner.jpg'); height: 400px; background-size: cover; background-position: center;">
+    <div class="container h-100 d-flex align-items-center justify-content-center">
+        <div class="text-center text-white">
+            <h1 class="fw-bold">@Model.Title</h1>
+            @if (!string.IsNullOrEmpty(Model.Subtitle))
+            {
+                <p class="lead">@Model.Subtitle</p>
+            }
+            <p class="post-meta">
+                Publikoval <strong>@Model.Author?.UserName</strong> dne @Model.CreatedAt.ToString("d. MMMM yyyy") · @((Model.Content.Length / 250) + 1) min čtení
+            </p>
+        </div>
+    </div>
+</header>
+
+<!-- Obsah článku -->
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            @Html.Raw(Model.Content != null ? Markdig.Markdown.ToHtml(Model.Content) : "")
+
+            <a asp-action="Index" class="btn btn-primary">Zpět na seznam</a>
+
+            @if (isAuthor || isAdmin)
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Upravit</a>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Opravdu chcete smazat tento článek?');">Smazat</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
