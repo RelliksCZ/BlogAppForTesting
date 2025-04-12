@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using BlogApp.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System;
 
@@ -18,7 +19,6 @@ namespace BlogApp.Controllers
             _context = context;
         }
 
-        // TEST: /api/articles/test
         [HttpGet("test")]
         public IActionResult Test()
         {
@@ -27,25 +27,53 @@ namespace BlogApp.Controllers
 
         // GET: /api/articles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Article>>> GetArticles()
+        public async Task<ActionResult<IEnumerable<ArticleDto>>> GetArticles()
         {
-            return await _context.Articles.ToListAsync();
+            var articles = await _context.Articles
+                .Include(a => a.Author)
+                .Select(a => new ArticleDto
+                {
+                    Id = a.Id,
+                    Title = a.Title,
+                    Subtitle = a.Subtitle,
+                    Content = a.Content,
+                    CreatedAt = a.CreatedAt,
+                    Author = a.Author != null ? a.Author.UserName : "Neznámý",
+                    FileName = a.FileName != null ? a.FileName : "Bez přílohy"
+                })
+                .ToListAsync();
+
+            return Ok(articles);
         }
 
         // GET: /api/articles/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Article>> GetArticle(int id)
+        public async Task<ActionResult<ArticleDto>> GetArticle(int id)
         {
-            var article = await _context.Articles.FindAsync(id);
+            var article = await _context.Articles
+                .Include(a => a.Author)
+                .FirstOrDefaultAsync(a => a.Id == id);
+
             if (article == null)
                 return NotFound();
 
-            return article;
+            var dto = new ArticleDto
+            {
+                Id = article.Id,
+                Title = article.Title,
+                Subtitle = article.Subtitle,
+                Content = article.Content,
+                CreatedAt = article.CreatedAt,
+                Author = article.Author != null ? article.Author.UserName : "Neznámý",
+                FileName = article.FileName != null ? article.FileName : "Bez přílohy"
+            };
+
+            return Ok(dto);
         }
 
         // POST: /api/articles
         [HttpPost]
-        public async Task<ActionResult<Article>> PostArticle([FromBody] Article article)
+        public async Task<ActionResult<ArticleDto>> PostArticle([FromBody] Article article)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -54,7 +82,18 @@ namespace BlogApp.Controllers
             _context.Articles.Add(article);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetArticle), new { id = article.Id }, article);
+            var dto = new ArticleDto
+            {
+                Id = article.Id,
+                Title = article.Title,
+                Subtitle = article.Subtitle,
+                Content = article.Content,
+                CreatedAt = article.CreatedAt,
+                Author = "Neznámý", // nebo najdi autora podle AuthorId
+                FileName = article.FileName
+            };
+
+            return CreatedAtAction(nameof(GetArticle), new { id = article.Id }, dto);
         }
 
         // DELETE: /api/articles/{id}

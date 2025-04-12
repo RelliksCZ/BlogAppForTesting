@@ -1,4 +1,5 @@
-﻿<head>
+﻿@using Microsoft.AspNetCore.Identity
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@ViewData["Title"] - BlogApp</title>
@@ -10,28 +11,39 @@
 <body>
 
     <!-- Navigační menu -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background: rgba(0, 0, 0, 0.5); z-index: 10;">
         <div class="container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">Clean Blog</a>
+            <a class="navbar-brand text-white fw-bold" asp-controller="Home" asp-action="Index">Clean Blog</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link text-white" asp-controller="Home" asp-action="Index">Domů</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" asp-controller="Articles" asp-action="Index">Články</a></li>
+
+                    @inject SignInManager<IdentityUser> SignInManager
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <li class="nav-item"><a class="nav-link text-white" asp-controller="Articles" asp-action="MyArticles">Moje články</a></li>
+                    }
+
+                    <li class="nav-item"><a class="nav-link text-white" asp-controller="Home" asp-action="Contact">Kontakt</a></li>
+                </ul>
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-controller="Articles" asp-action="Index">Posts</a></li>
-                    <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Contact">Contact</a></li>
                     <partial name="_LoginPartial" />
                 </ul>
             </div>
         </div>
     </nav>
 
+
+
     <!-- Hlavní obsah -->
-    <div class="container mt-4">
+    <main>
         @RenderBody()
-    </div>
+    </main>
 
     <!-- Footer -->
     <footer class="py-4 bg-light mt-5">
@@ -43,6 +55,9 @@
     <!-- Bootstrap -->
     <script src="~/js/scripts.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+
+
 
     <!-- TinyMCE Editor -->
     <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>

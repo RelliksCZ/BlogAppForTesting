@@ -20,3 +20,40 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+}
+
+.masthead {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 12rem 0;
+    color: white;
+}
+
+    .masthead .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* prùhledný èerný filtr */
+        z-index: 0;
+    }
+
+    .masthead .container {
+        position: relative;
+        z-index: 1;
+    }

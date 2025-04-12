@@ -2,7 +2,129 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hlavní banner -->
+<header>
+    <div id="mainCarousel" class="carousel slide" data-bs-ride="carousel" style="height: 100vh; overflow: hidden;">
+        <div class="carousel-inner h-100">
+            <div class="carousel-item active h-100" style="background-image: url('/assets/img/home-banner1.jpg'); background-size: cover; background-position: center;">
+                <div class="overlay position-absolute w-100 h-100" style="background-color: rgba(0,0,0,0.5); top: 0; left: 0; z-index: 1;"></div>
+                <div class="container h-100 d-flex flex-column justify-content-center align-items-center text-white position-relative" style="z-index: 2;">
+                    <h1 class="display-3 fw-bold">Clean Blog</h1>
+                    <p class="lead fs-4">A Blog Theme by Start Bootstrap</p>
+                </div>
+            </div>
+            <div class="carousel-item h-100" style="background-image: url('/assets/img/home-banner2.jpg'); background-size: cover; background-position: center;">
+                <div class="overlay position-absolute w-100 h-100" style="background-color: rgba(0,0,0,0.5); top: 0; left: 0; z-index: 1;"></div>
+                <div class="container h-100 d-flex flex-column justify-content-center align-items-center text-white position-relative" style="z-index: 2;">
+                    <h1 class="display-3 fw-bold">Inspirováno obsahem</h1>
+                    <p class="lead fs-4">Sdílej své příběhy s ostatními</p>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon"></span>
+            <span class="visually-hidden">Předchozí</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon"></span>
+            <span class="visually-hidden">Další</span>
+        </button>
+    </div>
+</header>
+
+
+<!-- Úvodní sekce -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                            <h2>Vítej na našem blogu</h2>
+                            <p class="fs-5">
+                                Tento blog je místem, kde sdílíme inspiraci, znalosti a příběhy. Najdeš zde články od různých autorů, praktické návody i pohledy na aktuální dění. Věříme, že si každý čtenář najde něco svého, co ho inspiruje nebo obohatí.
+                            </p>
+                            <p class="fs-5">
+                                Můžeš začít procházením <a asp-controller="Articles" asp-action="Index">článků</a>, zjistit více o nás, nebo nám <a asp-controller="Home" asp-action="Contact">napsat zprávu</a>. Jsme rádi, že jsi tady!
+                            </p>
+                    </div>
+                    <div class="col-lg-6 mb-4 mb-lg-0" style="max-width: 400px;">
+                        <img src="/assets/img/about-image.jpg" alt="Intro Image" class="img-fluid rounded shadow">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sekce: Nejnovější články -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Nejnovější články</h2>
+            <p class="fs-5">Prozkoumej nejnovější příspěvky našich autorů</p>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="/assets/img/article-sample1.jpg" class="card-img-top" alt="Článek 1">
+                    <div class="card-body">
+                        <h5 class="card-title">Název článku 1</h5>
+                        <p class="card-text">Krátký úvodní text článku, který naláká čtenáře k přečtení celé verze.</p>
+                        <a asp-controller="Articles" asp-action="Details" asp-route-id="10" class="btn btn-outline-primary">Číst více</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="/assets/img/article-sample2.jpg" class="card-img-top" alt="Článek 2">
+                    <div class="card-body">
+                        <h5 class="card-title">Název článku 2</h5>
+                        <p class="card-text">Další zajímavý úvod, který může návštěvníky zaujmout svým tématem.</p>
+                        <a asp-controller="Articles" asp-action="Details" asp-route-id="9" class="btn btn-outline-primary">Číst více</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="/assets/img/article-sample3.jpg" class="card-img-top" alt="Článek 3">
+                    <div class="card-body">
+                        <h5 class="card-title">Název článku 3</h5>
+                        <p class="card-text">Stručný výňatek z článku, který návštěvníka navnadí na celý obsah.</p>
+                        <a asp-controller="Articles" asp-action="Details" asp-route-id="11" class="btn btn-outline-primary">Číst více</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-4">
+            <a asp-controller="Articles" asp-action="Index" class="btn btn-primary">Zobrazit všechny články</a>
+        </div>
+    </div>
+</section>
+
+<!-- Sekce: O našem blogu -->
+<section class="py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 mb-4 mb-lg-0">
+                        <h2>O našem blogu</h2>
+                        <p class="fs-5">
+                            Náš blog vznikl z touhy sdílet myšlenky, zkušenosti a inspiraci s ostatními. Věříme, že slovo má sílu měnit, povzbuzovat i spojovat. Proto dáváme prostor autorům různých zaměření a životních příběhů.
+                        </p>
+                        <p class="fs-5">
+                            Chceme, aby blog byl místem pro každého – ať už hledáš konkrétní rady, nebo jen chvíli inspirace.
+                        </p>
+                        <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-secondary">Kontaktuj nás</a>
+                    </div>
+                    <div class="col-lg-6">
+                        <img src="/assets/img/about-blog.jpg" class="img-fluid rounded shadow" alt="O blogu">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+

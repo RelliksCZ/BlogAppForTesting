@@ -1,28 +1,78 @@
 ﻿@model BlogApp.Models.Article
-
 @{
     ViewData["Title"] = "Vytvořit článek";
 }
+<header class="masthead" style="background-image: url('/assets/banner.jpg'); height: 300px; background-size: cover; background-position: center;">
+    <div class="container h-100 d-flex align-items-center justify-content-center">
+        <div class="text-center text-white">
+            <h1 class="fw-bold">Vytvořit článek</h1>
+        </div>
+    </div>
+</header>
 
-<h2>Vytvořit článek</h2>
+<div class="container mt-4">
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div class="form-group">
+            <label asp-for="Title" class="control-label">Nadpis</label>
+            <input asp-for="Title" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Subtitle" class="control-label">Podnadpis</label>
+            <input asp-for="Subtitle" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Content" class="control-label">Text</label>
+            <textarea asp-for="Content" class="form-control tinymce"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="UploadFile" class="control-label">Příloha (volitelné)</label>
+            <input type="file" name="UploadFile" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-success">Uložit</button>
+        <a asp-action="Index" class="btn btn-secondary">Zpět</a>
+    </form>
+    <hr class="my-5" />
+    <div class="card bg-light">
+        <div class="card-body">
+            <h4 class="card-title">Tahák pro formátování článku</h4>
+            <p class="card-text">Při psaní článku můžeš používat <strong>Markdown</strong> – jednoduchý způsob, jak formátovat text bez znalosti HTML.</p>
 
-<form asp-action="Create" enctype="multipart/form-data">
-    <div class="form-group">
-        <label asp-for="Title" class="control-label">Nadpis</label>
-        <input asp-for="Title" class="form-control" />
+            <h5>Nadpisy</h5>
+            <pre><code># Nadpis 1
+## Nadpis 2
+### Nadpis 3</code></pre>
+
+            <h5>Tučný text a kurzíva</h5>
+            <pre><code>**Tučný text**
+*Kurzíva*</code></pre>
+
+            <h5>Odrážky</h5>
+            <pre><code>* První položka
+* Druhá položka
+* Třetí položka</code></pre>
+
+            <h5>Číslovaný seznam</h5>
+            <pre><code>1. První bod
+2. Druhý bod
+3. Třetí bod</code></pre>
+
+            <h5>Citace</h5>
+            <pre><code>> Toto je citace.</code></pre>
+
+            <h5>Odkaz</h5>
+            <pre><code>[Text odkazu](https://example.com)</code></pre>
+
+            <h5>Obrázek</h5>
+            <pre><code>![Popis obrázku](https://example.com/obrazek.jpg)</code></pre>
+
+            <h5>Kódový blok</h5>
+            <pre><code>```
+kód zde
+```</code></pre>
+
+            <h5>Oddělovač</h5>
+            <pre><code>---</code></pre>
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Subtitle" class="control-label">Podnadpis</label>
-        <input asp-for="Subtitle" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Content" class="control-label">Text</label>
-        <textarea asp-for="Content" class="form-control tinymce"></textarea>
-    </div>
-    <div class="form-group">
-        <label for="UploadFile" class="control-label">Příloha (volitelné)</label>
-        <input type="file" name="UploadFile" class="form-control" />
-    </div>
-    <button type="submit" class="btn btn-success">Uložit</button>
-    <a asp-action="Index" class="btn btn-secondary">Zpět</a>
-</form>
+
+</div>

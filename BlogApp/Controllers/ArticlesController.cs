@@ -86,10 +86,6 @@ namespace BlogApp.Controllers
             return View(article);
         }
 
-
-
-        // GET: Articles/Edit/5
-        // GET: Articles/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -109,7 +105,6 @@ namespace BlogApp.Controllers
             return View(article);
         }
 
-        // POST: Articles/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Subtitle,Content,CreatedAt,AuthorId")] Article article)
@@ -145,8 +140,6 @@ namespace BlogApp.Controllers
         }
 
 
-
-        // GET: Articles/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -163,7 +156,6 @@ namespace BlogApp.Controllers
             return View(article);
         }
 
-        // POST: Articles/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -181,5 +173,19 @@ namespace BlogApp.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> MyArticles()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Unauthorized();
+
+            var myArticles = await _context.Articles
+                .Where(a => a.AuthorId == user.Id)
+                .OrderByDescending(a => a.CreatedAt)
+                .ToListAsync();
+
+            return View(myArticles);
+        }
+
     }
 }
