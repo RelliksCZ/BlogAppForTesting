@@ -31,6 +31,15 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             @Html.Raw(Model.Content != null ? Markdig.Markdown.ToHtml(Model.Content) : "")
+            @if (!string.IsNullOrEmpty(Model.FileName))
+            {
+                <p class="mt-3">
+                    <strong>Příloha:</strong>
+                    <a href="@Url.Content("~/uploads/" + Model.FileName)" download>
+                        @Model.FileName
+                    </a>
+                </p>
+            }
 
             <a asp-action="Index" class="btn btn-primary">Zpět na seznam</a>
 

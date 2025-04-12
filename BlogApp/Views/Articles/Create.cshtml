@@ -6,7 +6,7 @@
 
 <h2>Vytvořit článek</h2>
 
-<form asp-action="Create">
+<form asp-action="Create" enctype="multipart/form-data">
     <div class="form-group">
         <label asp-for="Title" class="control-label">Nadpis</label>
         <input asp-for="Title" class="form-control" />
@@ -18,6 +18,10 @@
     <div class="form-group">
         <label asp-for="Content" class="control-label">Text</label>
         <textarea asp-for="Content" class="form-control tinymce"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="UploadFile" class="control-label">Příloha (volitelné)</label>
+        <input type="file" name="UploadFile" class="form-control" />
     </div>
     <button type="submit" class="btn btn-success">Uložit</button>
     <a asp-action="Index" class="btn btn-secondary">Zpět</a>

@@ -13,7 +13,7 @@ namespace BlogApp.Models
         [StringLength(200)]
         public required string Title { get; set; }
 
-        [StringLength(300)] // Podnadpis je volitelný, max 300 znaků
+        [StringLength(300)]
         public string? Subtitle { get; set; }
 
         [Required]
@@ -22,8 +22,10 @@ namespace BlogApp.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         [ForeignKey("Author")]
-        public string? AuthorId { get; set; } // ID uživatele, který článek napsal
+        public string? AuthorId { get; set; }
 
-        public IdentityUser? Author { get; set; } // Navigační vlastnost
+        public IdentityUser? Author { get; set; }
+
+        public string? FileName { get; set; } // název souboru (relativně)
     }
 }

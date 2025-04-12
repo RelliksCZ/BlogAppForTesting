@@ -51,10 +51,9 @@ namespace BlogApp.Controllers
             return View();
         }
 
-        // POST: Articles/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Subtitle,Content")] Article article)
+        public async Task<IActionResult> Create([Bind("Title,Subtitle,Content")] Article article, IFormFile? UploadFile)
         {
             if (ModelState.IsValid)
             {
@@ -64,12 +63,29 @@ namespace BlogApp.Controllers
                 article.AuthorId = user.Id;
                 article.CreatedAt = DateTime.Now;
 
+                if (UploadFile != null && UploadFile.Length > 0)
+                {
+                    var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+                    Directory.CreateDirectory(uploadsPath);
+
+                    var fileName = Path.GetFileName(UploadFile.FileName);
+                    var filePath = Path.Combine(uploadsPath, fileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await UploadFile.CopyToAsync(stream);
+                    }
+
+                    article.FileName = fileName;
+                }
+
                 _context.Add(article);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(article);
         }
+
 
 
         // GET: Articles/Edit/5
