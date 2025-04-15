@@ -22,13 +22,29 @@ namespace BlogApp.Controllers
 
         // GET: Articles
         [AllowAnonymous] // Seznam článků je veřejně dostupný
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, int page = 1)
         {
-            var articles = await _context.Articles
-                .Include(a => a.Author) // Načtení autora článku
-                .ToListAsync();
-            return View(articles);
+            ViewData["DateSortParm"] = string.IsNullOrEmpty(sortOrder) ? "date_asc" : "";
+            int pageSize = 5;
+
+            var articles = from a in _context.Articles.Include(a => a.Author)
+                           select a;
+
+            articles = sortOrder == "date_asc"
+                ? articles.OrderBy(a => a.CreatedAt)
+                : articles.OrderByDescending(a => a.CreatedAt);
+
+            var totalArticles = await articles.CountAsync();
+            var items = await articles.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            ViewData["CurrentPage"] = page;
+            ViewData["TotalPages"] = (int)Math.Ceiling(totalArticles / (double)pageSize);
+            ViewData["SortOrder"] = sortOrder;
+
+            return View(items);
         }
+
+
 
         // GET: Articles/Details/5
         [AllowAnonymous] // Detail článku je veřejně dostupný
@@ -53,7 +69,10 @@ namespace BlogApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Title,Subtitle,Content")] Article article, IFormFile? UploadFile)
+        public async Task<IActionResult> Create(
+            [Bind("Title,Subtitle,Content")] Article article,
+            IFormFile? UploadFile,
+            IFormFile? BannerImage)
         {
             if (ModelState.IsValid)
             {
@@ -63,11 +82,12 @@ namespace BlogApp.Controllers
                 article.AuthorId = user.Id;
                 article.CreatedAt = DateTime.Now;
 
+                var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+                Directory.CreateDirectory(uploadsPath);
+
+                // Uložení přílohy
                 if (UploadFile != null && UploadFile.Length > 0)
                 {
-                    var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
-                    Directory.CreateDirectory(uploadsPath);
-
                     var fileName = Path.GetFileName(UploadFile.FileName);
                     var filePath = Path.Combine(uploadsPath, fileName);
 
@@ -79,12 +99,36 @@ namespace BlogApp.Controllers
                     article.FileName = fileName;
                 }
 
+                // Uložení bannerového obrázku
+                if (BannerImage != null && BannerImage.Length > 0)
+                {
+                    var bannerFileName = Path.GetFileName(BannerImage.FileName);
+                    var bannerFilePath = Path.Combine(uploadsPath, bannerFileName);
+
+                    using (var stream = new FileStream(bannerFilePath, FileMode.Create))
+                    {
+                        await BannerImage.CopyToAsync(stream);
+                    }
+
+                    article.BannerImageFileName = bannerFileName;
+                }
+                else
+                {
+                    // Pokud nebyl nahrán obrázek, nastav náhodnou barvu
+                    var random = new Random();
+                    article.BannerColor = $"#{random.Next(0x1000000):X6}";
+                }
+
                 _context.Add(article);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(article);
         }
+
+
+
 
         public async Task<IActionResult> Edit(int? id)
         {
@@ -107,37 +151,74 @@ namespace BlogApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Subtitle,Content,CreatedAt,AuthorId")] Article article)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Subtitle,Content,CreatedAt,AuthorId")] Article updatedArticle, IFormFile? UploadFile, IFormFile? BannerImage)
         {
-            if (id != article.Id) return NotFound();
+            if (id != updatedArticle.Id) return NotFound();
 
             var user = await _userManager.GetUserAsync(User);
             bool isAdmin = User.IsInRole("Admin");
-            bool isAuthor = user != null && article.AuthorId == user.Id;
+            bool isAuthor = user != null && updatedArticle.AuthorId == user.Id;
 
             if (!isAuthor && !isAdmin)
             {
-                return Forbid(); // Zakázat přístup, pokud není autor nebo admin
+                return Forbid();
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(article);
+                    var existingArticle = await _context.Articles.FirstOrDefaultAsync(a => a.Id == id);
+                    if (existingArticle == null) return NotFound();
+
+                    // Aktualizace polí
+                    existingArticle.Title = updatedArticle.Title;
+                    existingArticle.Subtitle = updatedArticle.Subtitle;
+                    existingArticle.Content = updatedArticle.Content;
+
+                    var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+                    Directory.CreateDirectory(uploadsPath);
+
+                    if (UploadFile != null && UploadFile.Length > 0)
+                    {
+                        var fileName = Path.GetFileName(UploadFile.FileName);
+                        var filePath = Path.Combine(uploadsPath, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await UploadFile.CopyToAsync(stream);
+                        }
+
+                        existingArticle.FileName = fileName;
+                    }
+
+                    if (BannerImage != null && BannerImage.Length > 0)
+                    {
+                        var bannerFileName = Path.GetFileName(BannerImage.FileName);
+                        var bannerFilePath = Path.Combine(uploadsPath, bannerFileName);
+
+                        using (var stream = new FileStream(bannerFilePath, FileMode.Create))
+                        {
+                            await BannerImage.CopyToAsync(stream);
+                        }
+
+                        existingArticle.BannerImageFileName = bannerFileName;
+                    }
+
+                    _context.Update(existingArticle);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_context.Articles.Any(e => e.Id == article.Id))
-                        return NotFound();
-                    else
-                        throw;
+                    throw;
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(article);
+
+            return View(updatedArticle);
         }
+
+
 
 
         public async Task<IActionResult> Delete(int? id)
@@ -174,18 +255,27 @@ namespace BlogApp.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> MyArticles()
+        public async Task<IActionResult> MyArticles(int page = 1, int pageSize = 10)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null) return Unauthorized();
 
-            var myArticles = await _context.Articles
+            var query = _context.Articles
                 .Where(a => a.AuthorId == user.Id)
-                .OrderByDescending(a => a.CreatedAt)
+                .OrderByDescending(a => a.CreatedAt);
+
+            var totalArticles = await query.CountAsync();
+            var articles = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
-            return View(myArticles);
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling((double)totalArticles / pageSize);
+
+            return View(articles);
         }
+
 
     }
 }

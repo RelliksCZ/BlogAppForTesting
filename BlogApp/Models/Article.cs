@@ -26,6 +26,10 @@ namespace BlogApp.Models
 
         public IdentityUser? Author { get; set; }
 
-        public string? FileName { get; set; } // název souboru (relativně)
+        public string? FileName { get; set; } // název souboru
+        public string? BannerImageFileName { get; set; } // název souboru s bannerem
+        public string? BannerColor { get; set; } // barva banneru článku
+
+
     }
 }

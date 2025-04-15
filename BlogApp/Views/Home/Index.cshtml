@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<BlogApp.Models.Article>
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -57,50 +58,45 @@
     </div>
 </section>
 
-<!-- Sekce: Nejnovější články -->
+<!-- Nejnovější články -->
 <section class="py-5 bg-light">
     <div class="container">
-        <div class="text-center mb-5">
-            <h2 class="fw-bold">Nejnovější články</h2>
-            <p class="fs-5">Prozkoumej nejnovější příspěvky našich autorů</p>
+        <h2 class="mb-4 text-center">Nejnovější články</h2>
+        <div class="row g-4">
+            @foreach (var article in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">
+                                @article.Title
+                            </h5>
+                            @if (!string.IsNullOrEmpty(article.Subtitle))
+                            {
+                                <p class="card-subtitle mb-2 text-muted">@article.Subtitle</p>
+                            }
+                            <p class="text-muted mt-auto small">
+                                Publikoval <strong>@article.Author?.UserName</strong><br />
+                                @article.CreatedAt.ToString("d. MMMM yyyy") · @((article.Content.Length / 250) + 1) min čtení
+                            </p>
+
+                            <a asp-controller="Articles" asp-action="Details" asp-route-id="@article.Id" class="btn btn-sm btn-primary mt-3">
+                                Zobrazit článek
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+
         </div>
-        <div class="row">
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="/assets/img/article-sample1.jpg" class="card-img-top" alt="Článek 1">
-                    <div class="card-body">
-                        <h5 class="card-title">Název článku 1</h5>
-                        <p class="card-text">Krátký úvodní text článku, který naláká čtenáře k přečtení celé verze.</p>
-                        <a asp-controller="Articles" asp-action="Details" asp-route-id="10" class="btn btn-outline-primary">Číst více</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="/assets/img/article-sample2.jpg" class="card-img-top" alt="Článek 2">
-                    <div class="card-body">
-                        <h5 class="card-title">Název článku 2</h5>
-                        <p class="card-text">Další zajímavý úvod, který může návštěvníky zaujmout svým tématem.</p>
-                        <a asp-controller="Articles" asp-action="Details" asp-route-id="9" class="btn btn-outline-primary">Číst více</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img src="/assets/img/article-sample3.jpg" class="card-img-top" alt="Článek 3">
-                    <div class="card-body">
-                        <h5 class="card-title">Název článku 3</h5>
-                        <p class="card-text">Stručný výňatek z článku, který návštěvníka navnadí na celý obsah.</p>
-                        <a asp-controller="Articles" asp-action="Details" asp-route-id="11" class="btn btn-outline-primary">Číst více</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="text-center mt-4">
-            <a asp-controller="Articles" asp-action="Index" class="btn btn-primary">Zobrazit všechny články</a>
+
+        <div class="text-center mt-5">
+            <a asp-controller="Articles" asp-action="Index" class="btn btn-outline-primary">Zobrazit všechny články</a>
         </div>
     </div>
 </section>
+
+
 
 <!-- Sekce: O našem blogu -->
 <section class="py-5">

@@ -4,6 +4,7 @@ using BlogApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250412155556_AddBannerToArticle")]
+    partial class AddBannerToArticle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -32,9 +35,6 @@ namespace BlogApp.Migrations
 
                     b.Property<string>("AuthorId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("BannerColor")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("BannerImageFileName")
                         .HasColumnType("nvarchar(max)");

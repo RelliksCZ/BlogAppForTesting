@@ -47,6 +47,20 @@
                     </tbody>
                 </table>
             }
+            @if (ViewBag.TotalPages > 1)
+            {
+                <nav aria-label="Stránkování">
+                    <ul class="pagination justify-content-center">
+                        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                <a class="page-link" asp-action="MyArticles" asp-route-page="@i">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+
         </div>
     </div>
 </div>
